@@ -15,6 +15,17 @@
                     <x-nav-link :href="route('inicio')" :active="request()->routeIs('inicio')">
                         {{ ('Inicio') }}
                     </x-nav-link>
+
+                    @auth
+                    <x-nav-link :href="route('car.index')" :active="request()->routeIs('car.index')">
+                        {{ ('Mis coches') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('car.create')" :active="request()->routeIs('car.create')">
+                        {{ ('Añadir coche') }}
+                    </x-nav-link>
+                    @endauth
+
                 </div>
             </div>
 

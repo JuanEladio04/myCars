@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CarRequest;
 use App\Models\Car;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class CarController extends Controller
@@ -12,7 +14,7 @@ class CarController extends Controller
      */
     public function index()
     {
-        //
+        return view('car.index');
     }
 
     /**
@@ -20,15 +22,34 @@ class CarController extends Controller
      */
     public function create()
     {
-        //
+        return view('car.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CarRequest $request)
     {
-        //
+        $request->validated();
+
+        try {
+            $newCar = new Car();
+            $newCar->plate = $request->plate;
+            $newCar->marca = $request->marca;
+            $newCar->model = $request->model;
+            $newCar->year = $request->year;
+            $newCar->last_revision_date = $request->last_revision_date;
+            $newCar->price = $request->price;
+            $newCar->user_id = Auth::id();
+
+            $nombreFoto = time() . "-" . $request->file('photo')->getClientOriginalName();
+            $newCar->photo = $nombreFoto;
+
+            $newCar->save();
+        } catch (QueryException $e) {
+            return 'alerta';
+        }        
+
     }
 
     /**
