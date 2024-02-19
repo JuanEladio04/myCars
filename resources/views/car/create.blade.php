@@ -10,8 +10,7 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
 
-                    <form class="max-w-md mx-auto" enctype="multipart/form-data" method="POST"
-                        action="">
+                    <form class="max-w-md mx-auto" enctype="multipart/form-data" method="POST" action="{{ route('car.store') }}">
                         @csrf
                         <div class="relative z-0 w-full mb-5 group">
                             <input type="text" name="plate" id="plate"

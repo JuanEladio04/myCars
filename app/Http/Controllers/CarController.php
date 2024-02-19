@@ -6,6 +6,7 @@ use App\Http\Requests\CarRequest;
 use App\Models\Car;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CarController extends Controller
 {
@@ -14,7 +15,8 @@ class CarController extends Controller
      */
     public function index()
     {
-        return view('car.index');
+        $cars = Car::all();
+        return view('car.index')->with('cars', $cars);
     }
 
     /**
@@ -30,34 +32,42 @@ class CarController extends Controller
      */
     public function store(CarRequest $request)
     {
-        $request->validated();
-
         try {
+            $validatedData = $request->validated();
+    
             $newCar = new Car();
-            $newCar->plate = $request->plate;
-            $newCar->marca = $request->marca;
-            $newCar->model = $request->model;
-            $newCar->year = $request->year;
-            $newCar->last_revision_date = $request->last_revision_date;
-            $newCar->price = $request->price;
-            $newCar->user_id = Auth::id();
-
-            $nombreFoto = time() . "-" . $request->file('photo')->getClientOriginalName();
-            $newCar->photo = $nombreFoto;
-
+            $newCar->plate = $validatedData['plate'];
+            $newCar->marca = $validatedData['marca'];
+            $newCar->model = $validatedData['model']; 
+            $newCar->year = $validatedData['year'];
+            $newCar->last_revision_date = $validatedData['last_revision_date'];
+            $newCar->price = $validatedData['price'];
+            $newCar->user_id = Auth::user()->id;
+    
+            if ($request->hasFile('photo')) { 
+                $nombreFoto = time() . "-" . $request->file('photo')->getClientOriginalName();
+                $newCar->photo = $nombreFoto;
+    
+                $request->file('photo')->storeAs('public/img_car', $nombreFoto);
+            }
+    
             $newCar->save();
+    
+            return redirect()->route('car.index')->with('status', 'Coche creado correctamente');
         } catch (QueryException $e) {
-            return 'alerta';
-        }        
-
+            return redirect()->route('car.index')->with('status', 'Error al crear el coche');
+        }
     }
+    
+    
 
     /**
      * Display the specified resource.
      */
     public function show(Car $car)
     {
-        //
+        $myCar = Car::find($car);
+        return view('car.show')->with('car', $myCar);
     }
 
     /**

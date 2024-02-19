@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\APICarController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CarController;
 use App\Http\Controllers\UserController;
@@ -34,3 +35,5 @@ require __DIR__.'/auth.php';
 
 Route::resource('user', UserController::class)->middleware('auth');
 Route::resource('car', CarController::class)->middleware('auth');
+
+Route::apiResource('cars', APICarController::class);
